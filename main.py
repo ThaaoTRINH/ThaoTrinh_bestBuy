@@ -1,13 +1,12 @@
 import store
 
-menu = """1. List all products in store         2. Show total items in store
-3. Make an order                      4. Add product into warehouse
-5. Remove product from warehouse      6. Update for product
-7. Search product (Name / Price / Quantity)
-8. Sort products                      9. Quit"""
+menu = """1. List all products in store        
+2. Show total items in store
+3. Make an order                                           
+4. Quit"""
 
 def make_order():
-    products_list = store.get_data_json()
+    products_list = store.product_list
     print('------------------------------------------------------------------------')
     i = 1
     product_name_list = []
@@ -21,16 +20,24 @@ def make_order():
 
     while True:
         product_number = input('Which product # do you want? ')
+        if product_number == '':
+            break
+        if product_name_list[int(product_number) - 1].upper() == 'SHIPPING':
+            print('Invalid! ')
+            break
+        if product_name_list[int(product_number) - 1].upper() == 'WINDOWS LICENSE':
+            product_amount = 1
+            print('Just 1 "WINDOWS LICENSE" for each order')
+            break
         product_amount = input("What amount do you want? ")
-
         if product_number != '' and product_amount != '':
             print('Product added to list!')
             print()
+
             order_list.append((product_name_list[int(product_number) - 1], int(product_amount)))
         else:
             break
     return order_list
-
 
 def main():
     print('------------------------------------------------------------------------')
@@ -42,10 +49,11 @@ def main():
         number = int(input('Please choose a number: '))
         print()
 
-        if number == 9:
+        if number == 4:
             print('Thank you')
             break
         if number == 1:
+            print('LIST PRODUCTS IN STORE')
             store.Store.list_products(store.best_buy)
         elif number == 2:
 
@@ -57,24 +65,9 @@ def main():
             order_list = make_order()
             print('------------------------------------------------------------------------')
             print(f'Order made! Total payment is: {store.Store.order(store.best_buy, order_list)}')
+            print('(Include $10 shipping fee)')
             print('------------------------------------------------------------------------')
 
-        elif number == 4:
-            store.Store.add_product(store.best_buy)
-            store.Store.list_products(store.best_buy)
-
-        elif number == 5:
-            product_name = input('Enter the name of product to remove: > ')
-            store.Store.remove_product(store.best_buy, product_name)
-            store.Store.list_products(store.best_buy)
-        elif number == 6:
-            store.Store.update_product(store.best_buy)
-            store.Store.list_products(store.best_buy)
-        elif number == 7:
-            store.Store.search_product(store.best_buy)
-        elif number == 8:
-
-            store.Store.sort_product(store.best_buy)
         else:
             print('Invalid number. Try again! ')
 
